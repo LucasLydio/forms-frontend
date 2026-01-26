@@ -124,10 +124,4 @@ The frontend expects the backend to be running (see `../backend`). By default th
 
 ---
 
-If you want, I can:
-
-- add a short `CONTRIBUTING.md` for frontend dev flow,
-- run `npm install` and start the dev server here,
-- or open a short PR with these changes committed.
-
 File updated: [frontend2/README.md](frontend2/README.md)
