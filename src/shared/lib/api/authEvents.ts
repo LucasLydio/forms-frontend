@@ -6,7 +6,7 @@ const handlers = new Set<Handler>();
 export function onAuthEvent(handler: Handler): () => void {
   handlers.add(handler);
   return () => {
-    handlers.delete(handler); // <-- ensure cleanup returns void
+    handlers.delete(handler);
   };
 }
 

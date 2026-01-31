@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
 
 import type { FormWithQuestions, Question } from "../model/forms.types";
+import { FormEditor } from "./manage/FormEditor";
 
 function QuestionRow({ q }: { q: Question }) {
   return (
@@ -35,26 +36,16 @@ export function FormDetails({ form }: { form: FormWithQuestions }) {
         </CardHeader>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Questions</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {questions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No questions yet.</p>
-          ) : (
-            questions
-              .slice()
-              .sort((a, b) => a.orderIndex - b.orderIndex)
-              .map((q, idx) => (
-                <React.Fragment key={q.id}>
-                  {idx > 0 ? <Separator /> : null}
-                  <QuestionRow q={q} />
-                </React.Fragment>
-              ))
-          )}
-        </CardContent>
-      </Card>
+      <FormEditor
+        form={form}
+        busy={false}
+        onAddQuestion={() => console.log("add question")}
+        onDuplicateQuestion={(id) => console.log("duplicate", id)}
+        onDeleteQuestion={(id) => console.log("delete", id)}
+        onEditQuestion={(id) => console.log("edit", id)}
+        onAddOption={(id) => console.log("add option to question", id)}
+        onReorderQuestions={(next) => console.log("persist reorder", next)}
+      />
     </div>
   );
 }

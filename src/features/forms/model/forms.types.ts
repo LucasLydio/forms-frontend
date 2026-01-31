@@ -27,7 +27,7 @@ export type QuestionOption = {
 
 export type Question = {
   id: string;
-  formId: string;
+  formId?: string;
   prompt: string;
   type: QuestionType;
   isRequired: boolean;
@@ -70,6 +70,38 @@ export type FormSubmission = {
 export type CreateFormDTO = {
   title: string;
   description?: string | null;
+};
+
+export type QuestionDTO = {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    formId: string;
+    prompt: string;
+    type: QuestionType;
+    isRequired: boolean;
+    orderIndex: number;
+    minChoices: number | null;
+    maxChoices: number | null;
+    options?: {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        questionId: string;
+        orderIndex: number;
+        label: string;
+        value: string;
+    }[];
+};
+
+export type OptionDTO = {
+    id: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    questionId?: string;
+    orderIndex: number;
+    label: string;
+    value: string;
 };
 
 export type UpdateFormDTO = Partial<CreateFormDTO> & {

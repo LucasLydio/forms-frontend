@@ -14,7 +14,7 @@ import { AuthCard } from './../ui/AuthCard';
 function getRedirectFrom(state: unknown): string {
   const s = state as any;
   const from = typeof s?.from === "string" ? s.from : null;
-  return from && from.startsWith("/") ? from : "/forms";
+  return from && from.startsWith("/") ? from : "/";
 }
 
 export default function LoginPage() {

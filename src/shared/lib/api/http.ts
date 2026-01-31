@@ -3,13 +3,13 @@ import { emitAuthEvent } from "@/shared/lib/api/authEvents";
 import { env } from "@/app/config/env";
 import type { ApiError, ApiResponse, ErrorResponse, SuccessResponse } from "./types";
 import { getAccessToken, setAccessToken } from "@/shared/lib/api/tokenStore";
+import { authApi } from "@/features/auth/api/auth.api";
 
 export const http = axios.create({
   baseURL: env.API_BASE_URL,
   withCredentials: true,
 });
 
-/** Avoid multiple refresh calls at once */
 let refreshing: Promise<void> | null = null;
 
 function toApiError(error: unknown): ApiError {
@@ -51,56 +51,60 @@ export async function request<T>(fn: () => Promise<{ data: ApiResponse<T> }>): P
   }
 }
 
-/**
- * Refresh helper used by interceptor.
- * NOTE: uses the same axios instance to preserve cookies.
- */
 async function refreshSession(): Promise<void> {
   const res = await http.post<ApiResponse<{ accessToken: string }>>("/auth/refresh");
-  const data = unwrap(res.data); // returns { accessToken }
+  const data = unwrap(res.data); 
   setAccessToken(data.accessToken);
 }
 
-
-/**
- * Interceptor: on 401, refresh once then retry original request.
- */
-http.interceptors.request.use((cfg) => {
-  const token = getAccessToken();
+http.interceptors.request.use(async (cfg) => {
+  let token = getAccessToken();
   if (token) {
     cfg.headers = cfg.headers ?? {};
     cfg.headers.Authorization = `Bearer ${token}`;
   }
+
   return cfg;
 });
 
 http.interceptors.response.use(
   (res) => res,
-  async (error: AxiosError) => {
-    const status = error.response?.status;
-    const cfg = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
-
-    // If no config, can't retry
-    if (!cfg) throw error;
-
-    // Only handle 401 once per request
-    if (status !== 401 || cfg._retry) throw error;
-
-    // Mark as retried
-    cfg._retry = true;
-
-    try {
-      // Deduplicate refresh requests
-      refreshing = refreshing ?? refreshSession();
-      await refreshing;
-      refreshing = null;
-
-      // Retry original request
-      return http.request(cfg);
-    } catch (e) {
-    refreshing = null;
-    emitAuthEvent("unauthorized");
-    throw error; 
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      emitAuthEvent("unauthorized");
+     
     }
+    throw error;
   }
 );
+
+// http.interceptors.response.use(
+//   (res) => res,
+//   async (error: AxiosError) => {
+//     const status = error.response?.status;
+//     const cfg = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+
+
+//     if (!cfg) throw error;
+
+
+//     if (status !== 401 || cfg._retry) throw error;
+
+
+//     cfg._retry = true;
+
+//     try {
+//       // Deduplicate refresh requests
+//       refreshing = refreshing ?? refreshSession();
+//       await refreshing;
+//       refreshing = null;
+
+//       // Retry original request
+//       return http.request(cfg);
+//     } catch (e) {
+//     refreshing = null;
+//     emitAuthEvent("unauthorized");
+//     throw error; 
+//     }
+//   }
+// );

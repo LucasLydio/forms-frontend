@@ -2,7 +2,9 @@
 import type { ApiResponse } from "@/shared/lib/api/types";
 import { http, request } from "@/shared/lib/api/http";
 import type { AuthUser, AuthSession, LoginDTO, RegisterDTO } from "../model/auth.types";
-import { setAccessToken } from "@/shared/lib/api/tokenStore";
+import { getAccessToken, setAccessToken } from "@/shared/lib/api/tokenStore";
+
+let refreshingPromise: Promise<void> | null = null;
 
 export const authApi = {
   async login(dto: LoginDTO) {
@@ -20,18 +22,29 @@ export const authApi = {
   me() {
     return request<AuthUser>(() =>
       http.get<ApiResponse<AuthUser>>("/users/me", {
-        headers: { "Cache-Control": "no-store" },
+        headers: { "Cache-Control": "store" },
         params: { _t: Date.now() },
       })
     );
   },
 
   async refresh() {
-    const r = await request<{ accessToken: string }>(() =>
-      http.post<ApiResponse<{ accessToken: string }>>("/auth/refresh")
-    );
-    setAccessToken(r.accessToken);
-    return r;
+    
+    if (refreshingPromise) return refreshingPromise;
+
+    refreshingPromise = (async () => {
+      try {
+        const r = await request<{ accessToken: string }>(() =>
+          http.post<ApiResponse<{ accessToken: string }>>("/auth/refresh")
+        );
+        setAccessToken(r.accessToken);
+        return;
+      } finally {
+        refreshingPromise = null;
+      }
+    })();
+
+    return refreshingPromise;
   },
 
   logout() {

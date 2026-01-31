@@ -25,6 +25,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function reloadMe() {
     try {
+      console.log('teste22')
+      if (user) {
+      console.log('user')
+        return setUser(user)
+      }
       const me = await authApi.me();
       setUser(me);
     } catch {
@@ -32,31 +37,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Initial load: fetch /users/me once
-useEffect(() => {
-  let alive = true;
+  async function refresh() {
+    await authApi.refresh();
+    await reloadMe();
+  }
 
-  (async () => {
-    try {
-      // If user has a refresh cookie, this restores the access token after reload
-      await authApi.refresh().catch(() => {});
-      await reloadMe();
-    } finally {
-      if (alive) setIsLoading(false);
-    }
-  })();
-
-  return () => {
-    alive = false;
-  };
-}, []);
-
-
-  // Listen for unauthorized events (refresh failed or hard 401)
+ 
   useEffect(() => {
-    return onAuthEvent(() => {
-      setUser(null);
-    });
+    let alive = true;
+
+    async function boot() {
+      try {
+        await refresh();
+      } catch {
+        setUser(null);
+      } finally {
+        if (alive) setIsLoading(false);
+      }
+    }
+    boot();
+
+    return () => { alive = false; };
   }, []);
 
   async function login(dto: LoginDTO) {
@@ -75,11 +76,6 @@ useEffect(() => {
     } finally {
       setUser(null);
     }
-  }
-
-  async function refresh() {
-    await authApi.refresh();
-    await reloadMe();
   }
 
   const value = useMemo<AuthContextValue>(

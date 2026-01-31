@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/shared/lib/api/types";
 import { http, request } from "@/shared/lib/api/http";
 
-import type { CreateFormDTO, Form, FormWithQuestions, UpdateFormDTO } from "../model/forms.types";
+import type { OptionDTO, QuestionDTO, CreateFormDTO, Form, FormWithQuestions, Question, UpdateFormDTO } from "../model/forms.types";
 
 export const formsApi = {
   list() {
@@ -16,6 +16,30 @@ export const formsApi = {
     return request<FormWithQuestions>(() => http.get<ApiResponse<FormWithQuestions>>(`/forms/${id}`));
   },
 
+  addQuestion(id: string, payload: QuestionDTO) {
+    return request<QuestionDTO>(() => http.post<ApiResponse<QuestionDTO>>(`/forms/${id}/questions`, payload));
+  },
+
+  updateQuestion(id: string, payload: QuestionDTO) {
+    return request<QuestionDTO>(() => http.patch<ApiResponse<QuestionDTO>>(`/forms/questions/${id}`, payload));
+  },
+
+  addOption(id: string, payload: OptionDTO) {
+    return request<OptionDTO>(() => http.post<ApiResponse<OptionDTO>>(`/forms/${id}/options`, payload));
+  },
+
+  updateOption(id: string, payload: OptionDTO) {
+    return request<OptionDTO>(() => http.patch<ApiResponse<OptionDTO>>(`/forms/options/${id}`, payload));
+  },
+
+  deleteQuestion(id: string) {
+    return request<void>(() => http.delete<ApiResponse<void>>(`/forms/questions/${id}`));
+  },
+
+  deleteOption(id: string) {
+    return request<void>(() => http.delete<ApiResponse<void>>(`/forms/options/${id}`));
+  },
+
   update(id: string, payload: UpdateFormDTO) {
     return request<Form>(() => http.patch<ApiResponse<Form>>(`/forms/${id}`, payload));
   },
@@ -26,7 +50,7 @@ export const formsApi = {
     );
   },
 
-  remove(id: string) {
+  deleteForm(id: string) {
     return request<void>(() => http.delete<ApiResponse<void>>(`/forms/${id}`));
   },
 } as const;
