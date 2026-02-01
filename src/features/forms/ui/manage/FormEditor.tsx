@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import type { FormWithQuestions, Question } from "../../model/forms.types";
+import type { FormWithQuestions, OptionDTO, QuestionDTO } from "../../model/forms.types";
 import { QuestionsDraggableList } from "./QuestionsDraggableList";
 import { FormManageSidebar } from "./FormManageSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
@@ -13,14 +13,14 @@ type Props = {
   form: FormWithQuestions;
   busy?: boolean;
 
-  onAddQuestion: () => void;
-  onDuplicateQuestion: (questionId: string) => void;
-  onDeleteQuestion: (questionId: string) => void;
-  onEditQuestion: (questionId: string) => void;
+  onAddQuestion: (dto: QuestionDTO) => void;
+  onDuplicateQuestion: (formId: string) => void;
+  onDeleteQuestion: (formId: string) => void;
+  onEditQuestion: (payload: QuestionDTO) => void;
 
-  onAddOption: (questionId: string) => void;
+  onAddOption: (dto: OptionDTO) => void;
 
-  onReorderQuestions?: (next: Question[]) => void;
+  onReorderQuestions?: (next: QuestionDTO[]) => void;
 };
 
 export function FormEditor({
@@ -38,7 +38,7 @@ export function FormEditor({
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [showAddOption, setShowAddOption] = useState(false);
 
-  const [localQs, setLocalQs] = useState<Question[]>(form.questions ?? []);
+  const [localQs, setLocalQs] = useState<QuestionDTO[]>(form.questions ?? []);
 
   const selected = useMemo(
     () => localQs.find((q) => q.id === selectedId) ?? null,
@@ -54,7 +54,7 @@ export function FormEditor({
           <CardHeader className="flex-row items-center justify-between">
             <div className="flex flex-col">
               <CardTitle className="text-base">Editor</CardTitle>
-              <p className="text-sm text-muted-foreground">Select a question to manage it like Google Forms.</p>
+              <p className="text-sm text-muted-foreground">Select a question to manage it.</p>
             </div>
 
             {selected ? (
@@ -78,7 +78,7 @@ export function FormEditor({
                   busy={busy}
                   onCancel={() => setShowAddQuestion(false)}
                   onSubmit={async (dto: any) => {
-                    await onAddQuestion(); 
+                    await onAddQuestion(dto); 
                     setShowAddQuestion(false);
                   }}
                 />
@@ -119,10 +119,10 @@ export function FormEditor({
           canAddOption={!!selected && canAddOption}
           showAddQuestion={showAddQuestion}
           onToggleAddQuestion={() => setShowAddQuestion((v) => !v)}
-          onEdit={() => selected && onEditQuestion(selected.id)}
+          onEdit={() => selected && onEditQuestion(selected)}
           onDuplicate={() => selected && onDuplicateQuestion(selected.id)}
           onDelete={() => selected && onDeleteQuestion(selected.id)}
-          onAddOption={() => selected && onAddOption(selected.id)}
+          onAddOption={() => selected && onAddOption(selected.options)}
           onToggleReorder={() => setReorderEnabled((v) => !v)}
         />
       </div>

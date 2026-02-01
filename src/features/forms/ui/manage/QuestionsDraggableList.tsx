@@ -14,20 +14,20 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Question } from "../../model/forms.types";
+import type { Question, QuestionDTO } from "../../model/forms.types";
 import { QuestionCard } from "./QuestionCard";
 
 type Props = {
-  questions: Question[];
+  questions: QuestionDTO[];
   selectedId: string | null;
   reorderEnabled: boolean;
   onSelect: (id: string) => void;
 
   /** optimistic reorder in UI */
-  onReorderLocal: (next: Question[]) => void;
+  onReorderLocal: (next: QuestionDTO[]) => void;
 
   /** persist reorder to backend (optional) */
-  onPersistReorder?: (next: Question[]) => void;
+  onPersistReorder?: (next: QuestionDTO[]) => void;
 };
 
 export function QuestionsDraggableList({
@@ -87,7 +87,7 @@ function SortableRow({
   reorderEnabled,
   onClick,
 }: {
-  q: Question;
+  q: QuestionDTO;
   selected: boolean;
   reorderEnabled: boolean;
   onClick: () => void;

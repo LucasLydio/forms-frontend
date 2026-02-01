@@ -56,13 +56,12 @@ export function AddQuestionCard({ formId, show, busy, initial, onCancel, onSubmi
     if (!canSubmit || busy) return;
 
     const dto: QuestionDTO = {
-      formId,
       prompt: prompt.trim(),
       type,
       isRequired,
       minChoices: isChoice && minChoices.trim() ? Number(minChoices) : undefined,
       maxChoices: isChoice && maxChoices.trim() ? Number(maxChoices) : undefined,
-    } as any; // in case your DTO doesn’t include formId; remove if not needed
+    } as any;
 
     await onSubmit(dto);
   }

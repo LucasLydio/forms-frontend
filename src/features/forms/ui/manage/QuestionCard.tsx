@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "@/shared/ui/badge";
 import { Card } from "@/shared/ui/card";
-import type { Question } from "../../model/forms.types";
+import type { QuestionDTO } from "../../model/forms.types";
 
 export function QuestionCard({
   q,
@@ -9,7 +9,7 @@ export function QuestionCard({
   dragging,
   onClick,
 }: {
-  q: Question;
+  q: QuestionDTO;
   selected: boolean;
   dragging?: boolean;
   onClick: () => void;

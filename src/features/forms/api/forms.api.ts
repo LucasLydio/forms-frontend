@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/shared/lib/api/types";
 import { http, request } from "@/shared/lib/api/http";
 
-import type { OptionDTO, QuestionDTO, CreateFormDTO, Form, FormWithQuestions, Question, UpdateFormDTO } from "../model/forms.types";
+import type { OptionDTO, QuestionDTO, CreateFormDTO, Form, FormWithQuestions, UpdateFormDTO } from "../model/forms.types";
 
 export const formsApi = {
   list() {

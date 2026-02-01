@@ -45,12 +45,6 @@ export function FormCard({ form, canManage, busy, onTogglePublish, onDelete }: P
       ) : (
 
       <div className="flex flex-col gap-4 items-start">
-        <Button className="min-w-fit" variant="secondary" onClick={() => setActions((v) => !v)}>
-            <div className="flex min-w-fit items-center justify-between gap-2">
-                <p>Close Actions</p>
-                <X />
-            </div>
-        </Button>
         <div className="flex flex-wrap gap-2">
           <Link to={`/forms/${form.id}`}>
             <Button variant="outline" size="sm" className="w-24">
@@ -96,6 +90,12 @@ export function FormCard({ form, canManage, busy, onTogglePublish, onDelete }: P
           ) : null}
           
         </div>
+        <Button className="min-w-fit" variant="secondary" onClick={() => setActions((v) => !v)}>
+            <div className="flex min-w-fit items-center justify-between gap-2">
+                <p>Close Actions</p>
+                <X />
+            </div>
+        </Button>
       </div>
 
       )}

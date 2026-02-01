@@ -25,25 +25,25 @@ export type QuestionOption = {
   updatedAt: string;
 };
 
-export type Question = {
-  id: string;
-  formId?: string;
-  prompt: string;
-  type: QuestionType;
-  isRequired: boolean;
-  orderIndex: number;
+// export type Question = {
+//   id: string;
+//   formId?: string;
+//   prompt: string;
+//   type: QuestionType;
+//   isRequired: boolean;
+//   orderIndex: number;
 
-  minChoices?: number | null;
-  maxChoices?: number | null;
+//   minChoices?: number | null;
+//   maxChoices?: number | null;
 
-  createdAt: string;
-  updatedAt: string;
+//   createdAt: string;
+//   updatedAt: string;
 
-  options?: QuestionOption[];
-};
+//   options?: QuestionOption[];
+// };
 
 export type FormWithQuestions = Form & {
-  questions: Question[];
+  questions: QuestionDTO[];
 };
 
 export type FormSubmission = {
@@ -74,24 +74,16 @@ export type CreateFormDTO = {
 
 export type QuestionDTO = {
     id: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
     formId: string;
     prompt: string;
     type: QuestionType;
     isRequired: boolean;
     orderIndex: number;
-    minChoices: number | null;
-    maxChoices: number | null;
-    options?: {
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        questionId: string;
-        orderIndex: number;
-        label: string;
-        value: string;
-    }[];
+    minChoices?: number | null;
+    maxChoices?: number | null;
+    options: OptionDTO;
 };
 
 export type OptionDTO = {
@@ -115,8 +107,8 @@ export type StartSubmissionDTO = {
 
 export type UpsertAnswersDTO = {
   questionId: string;
-  textValue?: string;                // omit when sending options
-  selectedOptionIds?: string[];      // checkbox/radio
+  textValue?: string;          
+  selectedOptionIds?: string[];      
 };
 
 export type SubmitAnswersDTO = {
